@@ -11,6 +11,30 @@ import { ConnectWallet } from '~/components/ConnectWallet'
 import { useSNSContract } from '~/hooks/sns'
 import { TransactionList } from '~/components/TransactionList'
 import { useForm } from 'react-hook-form'
+import styled from 'styled-components'
+
+const HomeWrapper = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+
+const SNSTitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: white;
+`
+
+const SNSTitlePrimary = styled.div`
+  font-size: 60px;
+  font-weight: 700;
+`
 
 const Home: NextPage = () => {
   const {
@@ -46,11 +70,14 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div>
-      <h3>Argent X Wallet</h3>
-      <ConnectWallet />
+    <HomeWrapper>
+      {/* <h3>Argent X Wallet</h3> */}
+      {/* <ConnectWallet /> */}
 
-      <h3>Starknet Name Service / SNS</h3>
+      <SNSTitleContainer>
+        <SNSTitlePrimary>SNS</SNSTitlePrimary>
+        <div>Starknet Name Service </div>
+      </SNSTitleContainer>
       <p>Contract address (testnet): {snsContract?.connectedTo}</p>
 
       {/* <ShowNameLookup /> */}
@@ -60,7 +87,7 @@ const Home: NextPage = () => {
         {/* include validation with required or other standard HTML validation rules */}
         {/* errors will return when field validation fails  */}
 
-        <input defaultValue="name to register" {...register('nameRequired', { required: true })} />
+        <input placeholder="name to register" {...register('nameRequired', { required: true })} />
         {errors.nameRequired && <span> (This field is required) </span>}
 
         <input type="submit" />
@@ -72,7 +99,7 @@ const Home: NextPage = () => {
       </div>
 
       <DemoTransactionManager />
-    </div>
+    </HomeWrapper>
   )
 }
 
