@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@argent/get-starknet@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@argent/get-starknet/-/get-starknet-2.1.1.tgz#cc44b02ad11d427d0c6300c3c8e6d8eb9f2366cc"
-  integrity sha512-CqW/bXrvcTnLlhCpxc51uhRjVb7UUbUgkckhvIWBG3Ma9wKFWaJyJyZizRjh+I47NL5VL3PpJwzJC1tEKeaZBQ==
+"@argent/get-starknet@^3.0.0":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@argent/get-starknet/-/get-starknet-3.0.1.tgz#b3f80fd54528d4281bc5f3162d2576bb47c1c786"
+  integrity sha512-4jWzAU/vc6WWCrS5CabyrEVeQhYcYO6bLMgbJld+QRV6zlwgtRcsjjyfyxL9gKqP2IJI6V6dBHUdmvbxheUPQA==
 
 "@babel/code-frame@^7.16.7":
   version "7.16.7"
@@ -295,10 +295,10 @@
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.1.0.tgz#7f698254aadf921e48dda8c0a6b304026b8a9323"
   integrity sha512-JLo+Y592QzIE+q7Dl2pMUtt4q8SKYI5jDrZxrozEQxnGVOyYE+GWK9eLkwTaeN9DDctlaRAQ3TBmzZ1qdLE30A==
 
-"@starknet-react/core@^0.4.4":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@starknet-react/core/-/core-0.4.6.tgz#fca824d03a767001d60b1e3fc77e64144d5b0d2b"
-  integrity sha512-d0djl3nc7Qt7pLd+giP8iSQoPZp61FooPYfCQ5o8pcCtJy0N/fDh6TEHGiZnLScZFOKRwqrwotNGuLevasIi/Q==
+"@starknet-react/core@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@starknet-react/core/-/core-0.5.0.tgz#9e855abcb10db0fff3492a31f8dde55cffb495c5"
+  integrity sha512-D9CPSnG70gfyh0+VscYblDwx3S1oL+DOFTpuX7Vz89b6DVlIwIN2DxflOvS4/kJVzSV+iK5o1j135e/mn6HIRg==
   dependencies:
     immutable "^4.0.0"
 
