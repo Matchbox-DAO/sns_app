@@ -7,14 +7,13 @@ import {
 } from '@starknet-react/core'
 import { BigNumber } from 'bignumber.js'
 import type { NextPage } from 'next'
-import { ConnectWallet } from '~/components/ConnectWallet'
 import { useSNSContract } from '~/hooks/sns'
 import { TransactionList } from '~/components/TransactionList'
 import { useForm } from 'react-hook-form'
 import styled from 'styled-components'
 
 const HomeWrapper = styled.div`
-  min-height: 100vh;
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,6 +28,7 @@ const SNSTitleContainer = styled.div`
   text-transform: uppercase;
   font-weight: 500;
   color: white;
+  margin-bottom: 60px;
 `
 
 const SNSTitlePrimary = styled.div`
@@ -36,13 +36,68 @@ const SNSTitlePrimary = styled.div`
   font-weight: 700;
 `
 
+const NameInput = styled.input`
+  border-radius: 6px 0px 0px 6px;
+  font-size: 28px;
+  width: 100%;
+  border: none;
+  padding: 20px 0px 20px 55px;
+  display: block;
+
+  ::placeholder {
+    color: #dae5ef;
+    font-weight: 300;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+`
+
+const StyledForm = styled.form`
+  /* min-width: 780px; */
+  display: flex;
+  position: relative;
+  color: grey;
+
+  ::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translate(0px, -50%);
+    display: block;
+    width: 30px;
+    height: 30px;
+    background: url('/images/search.svg') no-repeat;
+  }
+`
+
+const SearchButton = styled.button`
+  border-radius: 0px 6px 6px 0px;
+  display: block;
+  background: rgb(82, 132, 255);
+  color: white;
+  font-size: 22px;
+  font-family: Overpass;
+  padding: 20px 0px;
+  height: 90px;
+  width: 162px;
+  border: none;
+
+  &:disabled {
+    background: rgb(199, 211, 227);
+  }
+`
+
 const Home: NextPage = () => {
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
-  } = useForm()
+    formState: { errors, isValid },
+  } = useForm({ mode: 'onChange' })
   const { account } = useStarknet()
   const { contract: snsContract } = useSNSContract()
   // const { invoke: invokeSnsRegister } = useStarknetInvoke({ contract: snsContract, method: 'sns_register' })
@@ -64,41 +119,45 @@ const Home: NextPage = () => {
       console.log('frontend not connected to SNS contract')
     } else {
       let data_dec_str = string_to_felt_bn(data['nameRequired']).toString()
-      invokeSnsRegister({ args: { name: data_dec_str } })
+      invokeSnsRegister({ args: [data_dec_str] })
       console.log('invoked sns_register() with ', data_dec_str)
     }
   }
 
   return (
     <HomeWrapper>
-      {/* <h3>Argent X Wallet</h3> */}
-      {/* <ConnectWallet /> */}
+      <div style={{ margin: '0px auto', minWidth: '60%' }}>
+        {/* <h3>Argent X Wallet</h3> */}
+        {/* <ConnectWallet /> */}
 
-      <SNSTitleContainer>
-        <SNSTitlePrimary>SNS</SNSTitlePrimary>
-        <div>Starknet Name Service </div>
-      </SNSTitleContainer>
-      <p>Contract address (testnet): {snsContract?.connectedTo}</p>
+        <SNSTitleContainer>
+          <SNSTitlePrimary>SNS</SNSTitlePrimary>
+          <div>Starknet Name Service </div>
+        </SNSTitleContainer>
+        {/* <p>Contract address (testnet): {snsContract?.connectedTo}</p> */}
 
-      {/* <ShowNameLookup /> */}
+        {/* <ShowNameLookup /> */}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* register your input into the hook by invoking the "register" function */}
-        {/* include validation with required or other standard HTML validation rules */}
-        {/* errors will return when field validation fails  */}
+        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+          {/* register your input into the hook by invoking the "register" function */}
+          {/* include validation with required or other standard HTML validation rules */}
+          {/* errors will return when field validation fails  */}
 
-        <input placeholder="name to register" {...register('nameRequired', { required: true })} />
-        {errors.nameRequired && <span> (This field is required) </span>}
+          <NameInput placeholder="Search Names" {...register('name', { required: true })} />
+          {/* {errors.nameRequired && <span> (This field is required) </span>} */}
 
-        <input type="submit" />
-      </form>
+          <SearchButton disabled={!account || !isValid} type="submit">
+            Search
+          </SearchButton>
+        </StyledForm>
 
-      <div>
-        <p>[tx status] Submitting: {loading ? 'Submitting' : 'Not Submitting'}</p>
-        <p>[tx status] Error: {error || 'No error'}</p>
+        {/* <div>
+          <p>[tx status] Submitting: {loading ? 'Submitting' : 'Not Submitting'}</p>
+          <p>[tx status] Error: {error || 'No error'}</p>
+        </div> */}
+
+        {/* <DemoTransactionManager /> */}
       </div>
-
-      <DemoTransactionManager />
     </HomeWrapper>
   )
 }
