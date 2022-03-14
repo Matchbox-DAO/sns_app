@@ -4,19 +4,24 @@ import {
   useStarknetInvoke,
   useStarknetTransactionManager,
   Transaction,
+  // UseStarknetCall,
 } from '@starknet-react/core'
-import { BigNumber } from 'bignumber.js'
 import type { NextPage } from 'next'
 import { useSNSContract } from '~/hooks/sns'
 import { TransactionList } from '~/components/TransactionList'
 import { useForm } from 'react-hook-form'
 import styled from 'styled-components'
+import { useState } from 'react'
+import SNSRegistry from '~/components/SNSRegistry'
+import { string_to_felt_bn } from '~/utils'
 
 const HomeWrapper = styled.div`
-  min-height: 70vh;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  padding-top: 60px;
+  /* justify-content: center;
+  align-items: center; */
 `
 
 const SNSTitleContainer = styled.div`
@@ -85,11 +90,24 @@ const SearchButton = styled.button`
   height: 90px;
   width: 162px;
   border: none;
+  cursor: pointer;
 
   &:disabled {
     background: rgb(199, 211, 227);
   }
 `
+
+export interface LookupData {
+  exist: boolean
+  adr?: string
+}
+
+export interface LookupState {
+  lookupName?: string
+  lookupData?: LookupData
+  lookupLoading: boolean
+  lookupError?: any
+}
 
 const Home: NextPage = () => {
   const {
@@ -100,28 +118,60 @@ const Home: NextPage = () => {
   } = useForm({ mode: 'onChange' })
   const { account } = useStarknet()
   const { contract: snsContract } = useSNSContract()
-  // const { invoke: invokeSnsRegister } = useStarknetInvoke({ contract: snsContract, method: 'sns_register' })
-  const {
-    data,
-    loading,
-    error,
-    reset,
-    invoke: invokeSnsRegister,
-  } = useStarknetInvoke({
-    contract: snsContract,
-    method: 'sns_register',
+  const [{ lookupName, lookupData, lookupLoading, lookupError }, setSNSLookupState] = useState<LookupState>({
+    lookupName: undefined,
+    lookupData: undefined,
+    lookupLoading: false,
+    lookupError: undefined,
   })
 
-  const onSubmit = (data: any) => {
-    if (!account) {
-      console.log('user wallet not connected yet.')
-    } else if (!snsContract) {
-      console.log('frontend not connected to SNS contract')
-    } else {
-      let data_dec_str = string_to_felt_bn(data['nameRequired']).toString()
-      invokeSnsRegister({ args: [data_dec_str] })
-      console.log('invoked sns_register() with ', data_dec_str)
+  // const { invoke: invokeSnsRegister } = useStarknetInvoke({ contract: snsContract, method: 'sns_register' })
+  // const {
+  //   data,
+  //   loading,
+  //   error,
+  //   reset,
+  //   invoke: invokeSnsRegister,
+  // } = useStarknetInvoke({
+  //   contract: snsContract,
+  //   method: 'sns_register',
+  // })
+
+  // const onSubmit = (data: any) => {
+  //   if (!account) {
+  //     console.log('user wallet not connected yet.')
+  //   } else if (!snsContract) {
+  //     console.log('frontend not connected to SNS contract')
+  //   } else {
+  //     let data_dec_str = string_to_felt_bn(data['nameRequired']).toString()
+  //     invokeSnsRegister({ args: [data_dec_str] })
+  //     console.log('invoked sns_register() with ', data_dec_str)
+  //   }
+  // }
+
+  const onSearch = (name: string | undefined) => {
+    if (!name || !snsContract) {
+      return
     }
+
+    let data_dec_str = string_to_felt_bn(name).toString()
+    console.log('🚀 ~ file: index.tsx ~ line 145 ~ onSearch ~ data_dec_str', data_dec_str)
+
+    setSNSLookupState({ lookupName: name, lookupData, lookupLoading: true, lookupError })
+    snsContract
+      .sns_lookup_name_to_adr(data_dec_str)
+      .then((data) => {
+        console.log('🚀 ~ file: index.tsx ~ line 159 ~ .then ~ data', data)
+        setSNSLookupState({
+          lookupName: name,
+          lookupData: { exist: Boolean(data.exist.toString()), adr: data.adr.toString() },
+          lookupLoading: false,
+          lookupError: undefined,
+        })
+      })
+      .catch((err) => {
+        setSNSLookupState({ lookupName: name, lookupData: undefined, lookupLoading: false, lookupError: err })
+      })
   }
 
   return (
@@ -138,7 +188,7 @@ const Home: NextPage = () => {
 
         {/* <ShowNameLookup /> */}
 
-        <StyledForm onSubmit={handleSubmit(onSubmit)}>
+        <StyledForm onSubmit={handleSubmit((inputData) => onSearch(inputData['name']))}>
           {/* register your input into the hook by invoking the "register" function */}
           {/* include validation with required or other standard HTML validation rules */}
           {/* errors will return when field validation fails  */}
@@ -150,6 +200,13 @@ const Home: NextPage = () => {
             Search
           </SearchButton>
         </StyledForm>
+
+        <SNSRegistry
+          lookupName={lookupName}
+          lookupLoading={lookupLoading}
+          lookupData={lookupData}
+          lookupError={lookupError}
+        />
 
         {/* <div>
           <p>[tx status] Submitting: {loading ? 'Submitting' : 'Not Submitting'}</p>
@@ -184,21 +241,6 @@ function TransactionItem({ transaction, onClick }: { transaction: Transaction; o
       {transaction.status}: {transaction.transactionHash} <button onClick={onClick}>remove</button>
     </div>
   )
-}
-
-function string_to_felt_bn(str: string) {
-  BigNumber.config({ EXPONENTIAL_AT: 76 })
-
-  let array = str.split('').map(function (c: string) {
-    return c.charCodeAt(0)
-  })
-  let felt_bn = new BigNumber(0)
-
-  for (const e of array) {
-    felt_bn = felt_bn.multipliedBy(256)
-    felt_bn = felt_bn.plus(e)
-  }
-  return felt_bn
 }
 
 export default Home
