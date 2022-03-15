@@ -114,6 +114,7 @@ const Home: NextPage = () => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid },
   } = useForm({ mode: 'onChange' })
   const { account } = useStarknet()
@@ -124,30 +125,6 @@ const Home: NextPage = () => {
     lookupLoading: false,
     lookupError: undefined,
   })
-
-  // const { invoke: invokeSnsRegister } = useStarknetInvoke({ contract: snsContract, method: 'sns_register' })
-  // const {
-  //   data,
-  //   loading,
-  //   error,
-  //   reset,
-  //   invoke: invokeSnsRegister,
-  // } = useStarknetInvoke({
-  //   contract: snsContract,
-  //   method: 'sns_register',
-  // })
-
-  // const onSubmit = (data: any) => {
-  //   if (!account) {
-  //     console.log('user wallet not connected yet.')
-  //   } else if (!snsContract) {
-  //     console.log('frontend not connected to SNS contract')
-  //   } else {
-  //     let data_dec_str = string_to_felt_bn(data['nameRequired']).toString()
-  //     invokeSnsRegister({ args: [data_dec_str] })
-  //     console.log('invoked sns_register() with ', data_dec_str)
-  //   }
-  // }
 
   const onSearch = (name: string | undefined) => {
     if (!name || !snsContract) {
@@ -172,6 +149,11 @@ const Home: NextPage = () => {
       .catch((err) => {
         setSNSLookupState({ lookupName: name, lookupData: undefined, lookupLoading: false, lookupError: err })
       })
+  }
+
+  const onSubmit = () => {
+    setSNSLookupState({ lookupName: undefined, lookupData: undefined, lookupLoading: false, lookupError: undefined })
+    reset()
   }
 
   return (
@@ -206,6 +188,7 @@ const Home: NextPage = () => {
           lookupLoading={lookupLoading}
           lookupData={lookupData}
           lookupError={lookupError}
+          onSubmit={onSubmit}
         />
 
         {/* <div>

@@ -2,7 +2,7 @@ import { LookupData, LookupState } from '~/pages'
 import styled from 'styled-components'
 import Loader from './Loader'
 import { useSNSContract } from '~/hooks/sns'
-import { useStarknetInvoke } from '@starknet-react/core'
+import { useStarknetInvoke, useStarknetTransactionManager } from '@starknet-react/core'
 import { string_to_felt_bn } from '~/utils'
 
 const RegistryContainer = styled.div`
@@ -74,13 +74,25 @@ const RegisterButton = styled.button`
   }
 `
 
-export default function SNSRegistry({ lookupName, lookupData, lookupLoading, lookupError }: LookupState) {
+export interface SNSRegistryProps extends LookupState {
+  onSubmit: () => void
+}
+
+export default function SNSRegistry({
+  lookupName,
+  lookupData,
+  lookupLoading,
+  lookupError,
+  onSubmit,
+}: SNSRegistryProps) {
   //   console.log('🚀 ~ file: SNSRegistry.tsx ~ line 60 ~ SNSRegistry ~ lookupName', lookupName)
 
   // const
   // console.log('🚀 ~ file: SNSRegistry.tsx ~ line 17 ~ SNSRegistry ~ lookupData', lookupData)
 
   const { contract: snsContract } = useSNSContract()
+
+  const { addTransaction } = useStarknetTransactionManager()
 
   const {
     data: registerHash,
@@ -100,6 +112,14 @@ export default function SNSRegistry({ lookupName, lookupData, lookupLoading, loo
     } else {
       let data_dec_str = string_to_felt_bn(lookupName).toString()
       invokeRegister({ args: [data_dec_str] })
+        .then((tx) => {
+          if (!tx) return
+          addTransaction({ transactionHash: tx.transaction_hash, address: tx.address, status: tx.code })
+        })
+        .then(() => {
+          onSubmit()
+        })
+        .catch((e) => console.error(e))
       console.log('invoked sns_register() with ', data_dec_str)
     }
   }
