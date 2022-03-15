@@ -78,7 +78,7 @@ export default function SNSRegistry({ lookupName, lookupData, lookupLoading, loo
   //   console.log('🚀 ~ file: SNSRegistry.tsx ~ line 60 ~ SNSRegistry ~ lookupName', lookupName)
 
   // const
-  console.log('🚀 ~ file: SNSRegistry.tsx ~ line 17 ~ SNSRegistry ~ lookupData', lookupData)
+  // console.log('🚀 ~ file: SNSRegistry.tsx ~ line 17 ~ SNSRegistry ~ lookupData', lookupData)
 
   const { contract: snsContract } = useSNSContract()
 
