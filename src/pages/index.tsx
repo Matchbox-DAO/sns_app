@@ -14,12 +14,14 @@ import styled from 'styled-components'
 import { useState } from 'react'
 import SNSRegistry from '~/components/SNSRegistry'
 import { isValidDiscordUsername, string_to_felt_bn } from '~/utils'
+import { Solve2MintRedirect } from '~/components/Solve2MintRedirect'
 
 const HomeWrapper = styled.div`
   min-height: 80vh;
   display: flex;
   flex-direction: column;
   padding-top: 60px;
+  position: relative;
   /* justify-content: center;
   align-items: center; */
 `
@@ -177,6 +179,7 @@ const Home: NextPage = () => {
 
   return (
     <HomeWrapper>
+      <Solve2MintRedirect />
       <div style={{ margin: '0px auto', minWidth: '60%' }}>
         {/* <h3>Argent X Wallet</h3> */}
         {/* <ConnectWallet /> */}
