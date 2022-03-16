@@ -14,3 +14,9 @@ export function string_to_felt_bn(str: string) {
   }
   return felt_bn
 }
+
+const DISCORD_REGEX = new RegExp(/^.{3,32}#[0-9]{4}$/)
+
+export function isValidDiscordUsername(name: string) {
+  return DISCORD_REGEX.test(name)
+}

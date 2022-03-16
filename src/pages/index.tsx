@@ -13,7 +13,7 @@ import { useForm } from 'react-hook-form'
 import styled from 'styled-components'
 import { useState } from 'react'
 import SNSRegistry from '~/components/SNSRegistry'
-import { string_to_felt_bn } from '~/utils'
+import { isValidDiscordUsername, string_to_felt_bn } from '~/utils'
 
 const HomeWrapper = styled.div`
   min-height: 80vh;
@@ -60,7 +60,7 @@ const NameInput = styled.input`
   }
 `
 
-const StyledForm = styled.form`
+const StyledInputSection = styled.div`
   /* min-width: 780px; */
   display: flex;
   position: relative;
@@ -97,6 +97,13 @@ const SearchButton = styled.button`
   }
 `
 
+const DiscordUsernameError = styled.div`
+  /* margin-top: 15px; */
+  color: red;
+  font-size: 18px;
+  padding: 15px 10px;
+`
+
 export interface LookupData {
   exist: boolean
   adr?: string
@@ -126,13 +133,25 @@ const Home: NextPage = () => {
     lookupError: undefined,
   })
 
+  const [discordUsernameError, setDiscordUsernameError] = useState(false)
+
   const onSearch = (name: string | undefined) => {
     if (!name || !snsContract) {
       return
     }
 
+    if (!isValidDiscordUsername(name)) {
+      setDiscordUsernameError(true)
+
+      if (lookupName) {
+        setSNSLookupState({ lookupName: name, lookupData: undefined, lookupLoading: false, lookupError })
+      }
+      return
+    }
+
+    setDiscordUsernameError(false)
+
     let data_dec_str = string_to_felt_bn(name).toString()
-    console.log('🚀 ~ file: index.tsx ~ line 145 ~ onSearch ~ data_dec_str', data_dec_str)
 
     setSNSLookupState({ lookupName: name, lookupData, lookupLoading: true, lookupError })
     snsContract
@@ -170,18 +189,23 @@ const Home: NextPage = () => {
 
         {/* <ShowNameLookup /> */}
 
-        <StyledForm onSubmit={handleSubmit((inputData) => onSearch(inputData['name']))}>
+        <form onSubmit={handleSubmit((inputData) => onSearch(inputData['name']))}>
           {/* register your input into the hook by invoking the "register" function */}
           {/* include validation with required or other standard HTML validation rules */}
           {/* errors will return when field validation fails  */}
 
-          <NameInput placeholder="Search Names" {...register('name', { required: true })} />
-          {/* {errors.nameRequired && <span> (This field is required) </span>} */}
+          <StyledInputSection>
+            <NameInput placeholder="Enter your Discord username" {...register('name', { required: true })} />
 
-          <SearchButton disabled={!account || !isValid} type="submit">
-            Search
-          </SearchButton>
-        </StyledForm>
+            <SearchButton disabled={!account || !isValid} type="submit">
+              Search
+            </SearchButton>
+          </StyledInputSection>
+
+          {discordUsernameError && (
+            <DiscordUsernameError> Please use a valid discord username (eg: guiltygyoza#0357) </DiscordUsernameError>
+          )}
+        </form>
 
         <SNSRegistry
           lookupName={lookupName}
