@@ -5,7 +5,7 @@ import ArrowRight from './ArrowRight'
 const Wrapper = styled.div`
   width: 700px;
   position: absolute;
-  bottom: 50px;
+  top: 50px;
   margin-left: auto;
   margin-right: auto;
   left: 0px;

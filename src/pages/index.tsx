@@ -20,7 +20,7 @@ const HomeWrapper = styled.div`
   min-height: 80vh;
   display: flex;
   flex-direction: column;
-  padding-top: 60px;
+  padding-top: 150px;
   position: relative;
   /* justify-content: center;
   align-items: center; */
@@ -129,9 +129,8 @@ const Home: NextPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm({ mode: 'onChange' })
   const { account } = useStarknet()
   const { contract: snsContract } = useSNSContract()
@@ -186,7 +185,6 @@ const Home: NextPage = () => {
 
   return (
     <HomeWrapper>
-      <Solve2MintRedirect />
       <div style={{ margin: '0px auto', minWidth: '60%' }}>
         {/* <h3>Argent X Wallet</h3> */}
         {/* <ConnectWallet /> */}
