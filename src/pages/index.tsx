@@ -106,6 +106,13 @@ const DiscordUsernameError = styled.div`
   padding: 15px 10px;
 `
 
+const Solve2MintSubtitle = styled.div`
+  color: rgb(120, 120, 120);
+  font-weight: 500;
+  font-size: 15px;
+  padding-top: 5px;
+`
+
 export interface LookupData {
   exist: boolean
   adr?: string
@@ -187,6 +194,7 @@ const Home: NextPage = () => {
         <SNSTitleContainer>
           <SNSTitlePrimary>SNS</SNSTitlePrimary>
           <div>Starknet Name Service </div>
+          <Solve2MintSubtitle>( For Solve2Mint )</Solve2MintSubtitle>
         </SNSTitleContainer>
         {/* <p>Contract address (testnet): {snsContract?.connectedTo}</p> */}
 
