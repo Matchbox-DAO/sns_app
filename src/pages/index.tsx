@@ -40,14 +40,14 @@ const Home: NextPage = () => {
       console.log('frontend not connected to SNS contract')
     } else {
       let data_dec_str = string_to_felt_bn(data['nameRequired']).toString()
-      invokeSnsRegister({ args: { name: data_dec_str } })
+      invokeSnsRegister({ args: [{ name: data_dec_str }] })
       console.log('invoked sns_register() with ', data_dec_str)
     }
   }
 
   return (
     <div>
-      <h3>Argent X Wallet</h3>
+      <h3>StarkNet Wallet</h3>
       <ConnectWallet />
 
       <h3>Starknet Name Service / SNS</h3>
